@@ -6,12 +6,18 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct FocusFixrApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LaunchScreenView()
         }
+        .modelContainer(
+            for: [ AccountData.self,
+                   EmailAddresses.self
+                 ]
+        )
     }
 }
