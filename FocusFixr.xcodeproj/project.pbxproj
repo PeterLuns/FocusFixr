@@ -9,12 +9,6 @@
 /* Begin PBXBuildFile section */
 		9F7EF3B72F782E6500BC7CB6 /* SwiftMail in Frameworks */ = {isa = PBXBuildFile; productRef = 9F7EF3B62F782E6500BC7CB6 /* SwiftMail */; };
 		9F7EF3BE2F7AD62100BC7CB6 /* FocusFixrIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 9F7EF3BD2F7AD62100BC7CB6 /* FocusFixrIcon.icon */; };
-		9F7EF3D42F7C6A7000BC7CB6 /* SettingsScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7EF3D22F7C6A7000BC7CB6 /* SettingsScreen.png */; };
-		9F7EF3D52F7C6A7000BC7CB6 /* ContentScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7EF3CF2F7C6A7000BC7CB6 /* ContentScreen.png */; };
-		9F7EF3D62F7C6A7000BC7CB6 /* OtherEmails.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7EF3D12F7C6A7000BC7CB6 /* OtherEmails.png */; };
-		9F7EF3D72F7C6A7000BC7CB6 /* Launchscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7EF3D02F7C6A7000BC7CB6 /* Launchscreen.png */; };
-		9F7EF3DB2F7C6A7A00BC7CB6 /* ContentScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7EF3D82F7C6A7A00BC7CB6 /* ContentScreen.png */; };
-		9F7EF3DC2F7C6A7A00BC7CB6 /* SettingsScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7EF3D92F7C6A7A00BC7CB6 /* SettingsScreen.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -279,13 +273,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F7EF3D42F7C6A7000BC7CB6 /* SettingsScreen.png in Resources */,
-				9F7EF3D52F7C6A7000BC7CB6 /* ContentScreen.png in Resources */,
-				9F7EF3D62F7C6A7000BC7CB6 /* OtherEmails.png in Resources */,
-				9F7EF3D72F7C6A7000BC7CB6 /* Launchscreen.png in Resources */,
 				9F7EF3BE2F7AD62100BC7CB6 /* FocusFixrIcon.icon in Resources */,
-				9F7EF3DB2F7C6A7A00BC7CB6 /* ContentScreen.png in Resources */,
-				9F7EF3DC2F7C6A7A00BC7CB6 /* SettingsScreen.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,9 +10,9 @@ import SwiftData
 
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var accounts: [AccountData]
-    @Query private var otherEmails: [EmailAddresses]
+    @Environment(\.modelContext) var modelContext
+    @Query var accounts: [AccountData]
+    @Query var otherEmails: [EmailAddresses]
     
     @State private var accountDisplayName: String = ""
     
@@ -23,7 +23,6 @@ struct ContentView: View {
     @FocusState private var isFocused: Bool
         
     var mailConnector: MailConnector = MailConnector()
-//    var smtpConnector: SMTPConnector = SMTPConnector()
 
     private func sendMessage() {
         // clean up, message has been sent
@@ -91,6 +90,7 @@ struct ContentView: View {
 
                     VStack (alignment: .leading)
                     {
+                        // Logo and settings bar
                         HStack{
                             Image("Logo")
                                 .resizable()
@@ -114,6 +114,7 @@ struct ContentView: View {
                                     .padding()
                             }
                         }
+
                         Toggle("Send to myself",isOn: $Send2Myself)
                             .foregroundStyle(Color.black)
 
@@ -128,18 +129,22 @@ struct ContentView: View {
                             .foregroundStyle(Color.black)
 
                         if Send2Others {
-                            List(otherEmails){
-                                otheremail in OtherEmailItem(otheremailItem: otheremail)
-                                    .listRowBackground(Color.white)
+                                List(otherEmails){
+                                    otheremail in OtherEmailItem(otheremailItem: otheremail)
+                                        .listRowBackground(Color.white)
+                                }
+                                .listStyle(.inset)
+                                .scrollContentBackground(.hidden)
+                                .frame(maxWidth: .infinity, maxHeight: 130)
+                                
+                            NavigationLink(destination: SettingsView()){
+                                Text("Add via settings")
+                                    .foregroundStyle(Color.black)
                             }
-                            .listStyle(.inset)
-                            .scrollContentBackground(.hidden)
-                            .frame(maxWidth: .infinity, maxHeight: 120)
-                            
-                            Text("Add via settings")
-                                .foregroundStyle(Color.black)
+                         
                         }
                         
+                        // Actions send & clear
                         HStack{
                             Button{
                                 sendMessage()
@@ -149,10 +154,6 @@ struct ContentView: View {
                                     .frame(maxWidth: .infinity)
                             }
                              
-//                            Button(action: sendMessage){
-//                                Text("Send message")
-//                                    .frame(maxWidth: .infinity)
-//                            }
                             .disabled( messageText == "")
                             .padding(5)
                             .background(Color(red:0.933, green: 0.929, blue: 0.560).opacity(1))
@@ -201,7 +202,16 @@ struct OtherEmailItem: View {
 }
 
 #Preview {
-    NavigationStack{
-        ContentView()
-    }
+    
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: EmailAddresses.self, configurations: config)
+    
+    container.mainContext.insert(EmailAddresses(email: "test@test.com", isSelected: true))
+    container.mainContext.insert(EmailAddresses(email: "luns@xs4all.nl", isSelected: false))
+    container.mainContext.insert(EmailAddresses(email: "adriana.luns@outlook.com", isSelected: false))
+
+    return ContentView().modelContainer(container)
+//    NavigationStack{
+//        ContentView()
+//    }
 }
