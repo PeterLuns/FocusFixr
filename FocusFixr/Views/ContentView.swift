@@ -21,43 +21,55 @@ struct ContentView: View {
     @State private var messageText: String = ""
     
     @FocusState private var isFocused: Bool
-        
+    
+    @State private var navPath = NavigationPath()
+    
+    @State private var showError: Bool = false
+            
     var mailConnector: MailConnector = MailConnector()
+    
+    
 
+    private func isMessageValid() -> (Bool, String) {
+    
+        var messageValid: Bool = true
+        var errorMessage: String = ""
+        
+        if accounts.first?.accountName == "" {
+            messageValid = false
+            errorMessage = "No email account configured. \nGoto settings (gear, top right) to add email address."
+        }
+        else if messageText.count == 0 {
+            messageValid = false
+            errorMessage = "No message text entered to send."
+        }
+        return (messageValid, errorMessage)
+    }
+    
     private func sendMessage() {
-        // clean up, message has been sent
         Task{
-            if accounts.first?.accountName == "" {
-                _ = Alert(title: Text("Error"), message: Text("No email account configured"), dismissButton: .default(Text("OK")))
-            }
-            else if messageText.count == 0{
-                _ = Alert(title: Text("Error"), message: Text("No message text present"), dismissButton: .default(Text("OK")))
-            }
-            else {
 
-                await mailConnector.connectSMTP()
-                    
-                if mailConnector.isSMTPConnected == false  {
-                    _ = Alert(title: Text("Error"), message: Text("Could not connect to SMTP server"), dismissButton: .default(Text("OK")))
+            await mailConnector.connectSMTP()
+                
+            if mailConnector.isSMTPConnected == false  {
+                _ = Alert(title: Text("Error"), message: Text("Could not connect to SMTP server"), dismissButton: .default(Text("OK")))
+            } else {
+                let toAddress = accounts.first!.accountName
+                let maxIndex = messageText.count > 60 ? 60 : messageText.count
+                let subject = String(messageText.prefix(maxIndex))
+                let result = await mailConnector.sendSMTPEmail(
+                    to: toAddress,
+                    recipients: getReciepients(),
+                    subject: subject,
+                    body: messageText)
+                
+                if result == false {
+                    _ = Alert(title: Text("Error"), message: Text("Failied to send email"), dismissButton: .default(Text("OK")))
                 } else {
-                    let toAddress = accounts.first!.accountName
-                    let maxIndex = messageText.count > 60 ? 60 : messageText.count
-                    let subject = String(messageText.prefix(maxIndex))
-                    let result = await mailConnector.sendSMTPEmail(
-                        to: toAddress,
-                        recipients: getReciepients(),
-                        subject: subject,
-                        body: messageText)
-                    
-                    if result == false {
-                        _ = Alert(title: Text("Error"), message: Text("Failied to send email"), dismissButton: .default(Text("OK")))
-                    } else {
-                        clearMessage()
-                    }
+                    clearMessage()
                 }
             }
         }
-
     }
     
     private func clearMessage(){
@@ -74,7 +86,7 @@ struct ContentView: View {
     }
        
     var body: some View {
-            NavigationView {
+        NavigationStack (path: $navPath) {
                 ZStack {
                     LinearGradient(
                         gradient: Gradient(
@@ -115,6 +127,7 @@ struct ContentView: View {
                             }
                         }
 
+                        // email destination parameters
                         Toggle("Send to myself",isOn: $Send2Myself)
                             .foregroundStyle(Color.black)
 
@@ -146,15 +159,21 @@ struct ContentView: View {
                         
                         // Actions send & clear
                         HStack{
+                            let (messageValid, errorMsg) = isMessageValid()
                             Button{
-                                sendMessage()
-                                isFocused = false
+                                if (messageValid == true){
+                                    sendMessage()
+                                    isFocused = false
+                                }
+                                else{
+                                    showError = true
+                                }
                             } label: {
                                 Text("Send message")
                                     .frame(maxWidth: .infinity)
+                            }.alert(errorMsg,isPresented: $showError){
+                                Button("Close", role: .cancel){}
                             }
-                             
-                            .disabled( messageText == "")
                             .padding(5)
                             .background(Color(red:0.933, green: 0.929, blue: 0.560).opacity(1))
                             .foregroundColor(Color(red:0, green: 0.121, blue: 0.2039).opacity(1))
@@ -180,9 +199,20 @@ struct ContentView: View {
 
                     }
                     .padding()
+                    .navigationDestination(for: String.self)
+                    {
+                        value in
+                        if value == "Settings" { SettingsView()}
+                    }
+                }
 
+        }
+        .onAppear(){
+            if (accounts.first?.accountName == ""){
+                navPath.append("Settings")
             }
         }
+
     }
 }
 
